@@ -95,9 +95,8 @@ window.MossCave = window.MossCave || {};
 
   function posTab() {
     var s = M.state;
-    var pos = M.posDays();
-    var posSel = pos.filter(function (p) { return p.key === s.posDateKey; })[0] || pos[0];
     var posInfo = M.dayInfo.apply(M, M.keyParts(s.posDateKey));
+    var posDateLabel = M.MONTHS[posInfo.date.getMonth()].slice(0, 3) + ' ' + posInfo.date.getDate();
     var posOver = posInfo.remaining < s.posParty;
     var total = '$' + (s.posParty * s.pricePerGuest);
 
@@ -105,25 +104,31 @@ window.MossCave = window.MossCave || {};
       return '<div style="max-width:640px"><div style="background:#11180e;border:1px solid rgba(155,209,122,.18);border-radius:16px;padding:48px;text-align:center">' +
         '<div style="width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#bfe89a,#5f8a45);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;box-shadow:0 0 36px rgba(155,209,122,.45)">✓</div>' +
         '<div style="font-family:\'Newsreader\',serif;font-size:28px;margin-bottom:8px">Booking recorded</div>' +
-        '<div style="font-size:14.5px;color:#b0bda4;margin-bottom:6px">' + posSel.mon + ' ' + posSel.day + ' · ' + s.posParty + ' guests · ' + total + '</div>' +
+        '<div style="font-size:14.5px;color:#b0bda4;margin-bottom:6px">' + posDateLabel + ' · ' + s.posParty + ' guests · ' + total + '</div>' +
         '<div style="font-size:13px;color:#73815f;margin-bottom:26px">Quota updated. Receipt printed to counter.</div>' +
         '<button id="pos-reset" class="btn-accent" style="font-size:14px;padding:12px 26px">New walk-in booking</button></div></div>';
     }
-    var chips = pos.map(function (p) {
-      var active = p.key === s.posDateKey, dis = p.status === 'full';
-      var dot = active ? '#0c110b' : { open: '#9bd17a', limited: '#d9a44e', full: '#a85d59', past: '#3a4632' }[p.status];
-      var cs = 'flex:none;width:60px;padding:10px 0;border-radius:12px;text-align:center;cursor:' + (dis ? 'not-allowed' : 'pointer') + ';transition:all .2s;border:1px solid ' + (active ? '#9bd17a' : 'rgba(155,209,122,.12)') + ';background:' + (active ? '#9bd17a' : dis ? 'rgba(120,60,56,.08)' : 'rgba(155,209,122,.04)') + ';color:' + (active ? '#0c110b' : dis ? '#6e5350' : '#cdd8c2') + ';opacity:' + (dis ? 0.6 : 1);
-      return '<div ' + (dis ? '' : 'data-pos-key="' + p.key + '" ') + 'style="' + cs + '"><div style="font-family:\'Space Mono\',monospace;font-size:10px;opacity:.7">' + p.dow + '</div><div style="font-family:\'Newsreader\',serif;font-size:20px;line-height:1.2">' + p.day + '</div><div style="width:5px;height:5px;border-radius:50%;background:' + dot + ';margin:4px auto 0"></div></div>';
+    var cells = M.buildMonth(s.posYear, s.posMonth, s.posDateKey);
+    var calGrid = cells.map(function (d) {
+      if (d.blank) return '<div style="' + d.cellStyle + '"></div>';
+      return '<div ' + (d.clickable ? 'data-pos-key="' + d.key + '" ' : '') + 'style="' + d.cellStyle + '">' +
+        '<div style="font-size:14px;font-weight:500;line-height:1">' + d.day + '</div><div style="' + d.dotStyle + '"></div></div>';
     }).join('');
+    var legendDot = function (color, label) { return '<span style="display:flex;align-items:center;gap:7px"><i style="width:8px;height:8px;border-radius:50%;background:' + color + ';display:inline-block"></i>' + label + '</span>'; };
+    var calendar = '<div style="background:rgba(12,17,11,.4);border:1px solid rgba(155,209,122,.1);border-radius:14px;padding:18px;margin-bottom:24px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><button data-pos-nav="-1" class="cal-nav">‹</button><div style="font-family:\'Newsreader\',serif;font-size:20px">' + M.MONTHS[s.posMonth] + ' ' + s.posYear + '</div><button data-pos-nav="1" class="cal-nav">›</button></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px">' + M.WEEKDAY_LABELS.map(function (w) { return '<div class="wd">' + w + '</div>'; }).join('') + '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">' + calGrid + '</div>' +
+      '<div style="display:flex;gap:18px;margin-top:14px;font-size:12px;color:#8c9a80;font-family:\'Space Mono\',monospace">' + legendDot('#9bd17a', 'open') + legendDot('#d9a44e', 'limited') + legendDot('#7a4a48', 'full') + '</div></div>';
     var btnStyle = 'font-family:inherit;font-size:15px;font-weight:600;padding:15px;border-radius:12px;border:none;cursor:' + (posOver ? 'not-allowed' : 'pointer') + ';width:100%;background:' + (posOver ? 'rgba(120,60,56,.25)' : '#9bd17a') + ';color:' + (posOver ? '#8c6b68' : '#0c110b');
     return '<div style="max-width:640px"><div style="' + CARD + ';border-radius:16px;padding:28px">' +
       '<div style="font-size:13px;color:#9aa790;margin-bottom:10px">Guest name</div>' +
       '<input id="pos-name" value="' + String(s.posName || '').replace(/"/g, '&quot;') + '" placeholder="Walk-in guest" style="width:100%;font-family:inherit;font-size:15px;color:#e7ede0;background:rgba(12,17,11,.6);border:1px solid rgba(155,209,122,.16);border-radius:11px;padding:13px 15px;margin-bottom:24px;outline:none" />' +
-      '<div style="font-size:13px;color:#9aa790;margin-bottom:10px">Date</div><div style="display:flex;gap:9px;overflow-x:auto;padding-bottom:8px;margin-bottom:24px">' + chips + '</div>' +
+      '<div style="font-size:13px;color:#9aa790;margin-bottom:10px">Date</div>' + calendar +
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px">' +
       '<div><div style="font-size:13px;color:#9aa790;margin-bottom:10px">Slot</div><div style="display:flex;gap:8px"><button data-pos-slot="morning" style="' + slotBtn(s.posSlot === 'morning') + '">Morning</button><button data-pos-slot="afternoon" style="' + slotBtn(s.posSlot === 'afternoon') + '">Afternoon</button></div></div>' +
       '<div><div style="font-size:13px;color:#9aa790;margin-bottom:10px">Party size</div><div style="display:flex;align-items:center;justify-content:space-between;background:rgba(155,209,122,.06);border:1px solid rgba(155,209,122,.14);border-radius:11px;padding:7px 10px"><button data-pos-party="dec" style="width:32px;height:32px;border-radius:8px;background:rgba(12,17,11,.6);border:1px solid rgba(155,209,122,.2);color:#cdd8c2;font-size:18px;cursor:pointer">–</button><span style="font-family:\'Newsreader\',serif;font-size:24px">' + s.posParty + '</span><button data-pos-party="inc" style="width:32px;height:32px;border-radius:8px;background:rgba(12,17,11,.6);border:1px solid rgba(155,209,122,.2);color:#cdd8c2;font-size:18px;cursor:pointer">+</button></div></div></div>' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:12px;background:rgba(155,209,122,.05);border:1px solid rgba(155,209,122,.1);margin-bottom:20px"><div><div style="font-size:13px;color:#9aa790">' + posSel.mon + ' ' + posSel.day + ' · ' + posInfo.remaining + '/' + posInfo.quota + ' left</div><div style="font-size:12px;color:#73815f;font-family:\'Space Mono\',monospace">' + s.posParty + ' × ' + total + '</div></div><div style="font-family:\'Newsreader\',serif;font-size:30px;color:#bfe89a">' + total + '</div></div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:12px;background:rgba(155,209,122,.05);border:1px solid rgba(155,209,122,.1);margin-bottom:20px"><div><div style="font-size:13px;color:#9aa790">' + posDateLabel + ' · ' + posInfo.remaining + '/' + posInfo.quota + ' left</div><div style="font-size:12px;color:#73815f;font-family:\'Space Mono\',monospace">' + s.posParty + ' × ' + total + '</div></div><div style="font-family:\'Newsreader\',serif;font-size:30px;color:#bfe89a">' + total + '</div></div>' +
       '<button id="pos-complete" style="' + btnStyle + '">' + (posOver ? 'Not enough spots' : 'Complete booking') + '</button></div></div>';
   }
 
@@ -200,6 +205,12 @@ window.MossCave = window.MossCave || {};
       // POS
       root.querySelectorAll('[data-pos-key]').forEach(function (el) {
         el.addEventListener('click', function () { M.setState({ posDateKey: this.getAttribute('data-pos-key'), posDone: false }); });
+      });
+      root.querySelectorAll('[data-pos-nav]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var d = +this.getAttribute('data-pos-nav');
+          M.setState(function (s) { var m = s.posMonth + d, y = s.posYear; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } return { posMonth: m, posYear: y }; });
+        });
       });
       root.querySelectorAll('[data-pos-slot]').forEach(function (el) {
         el.addEventListener('click', function () { M.setState({ posSlot: this.getAttribute('data-pos-slot') }); });
