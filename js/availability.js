@@ -46,9 +46,9 @@ window.MossCave = window.MossCave || {};
     };
   };
 
-  // Month grid cells for the current state.year/state.month (shared by landing + mobile).
-  M.buildDays = function () {
-    var year = M.state.year, month = M.state.month, selectedKey = M.state.selectedKey;
+  // Month grid cells for any year/month, highlighting selectedKey.
+  // Shared by the public calendar (landing/mobile) and the admin POS calendar.
+  M.buildMonth = function (year, month, selectedKey) {
     var first = new Date(year, month, 1);
     var startDow = first.getDay();
     var dim = new Date(year, month + 1, 0).getDate();
@@ -69,6 +69,11 @@ window.MossCave = window.MossCave || {};
       cells.push({ blank: false, show: true, day: d, key: info.key, status: info.status, clickable: clickable, selected: selected, cellStyle: cellStyle, dotStyle: dotStyle });
     }
     return cells;
+  };
+
+  // Public booking calendar grid for the current state.year/state.month.
+  M.buildDays = function () {
+    return M.buildMonth(M.state.year, M.state.month, M.state.selectedKey);
   };
 
   // View-model for the currently selected day (badge, availability bar, total).
