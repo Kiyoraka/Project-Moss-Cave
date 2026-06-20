@@ -36,7 +36,17 @@ body{background:#0c110b}
 .logo-dot{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 32% 30%,#bfe89a,#5f8a45 60%,#2e4626);box-shadow:0 0 18px rgba(155,209,122,.5)}
 
 /* ----- accent button ----- */
-.btn-accent{color:#0c110b;background:#9bd17a;border:none;border-radius:100px;cursor:pointer;font-weight:600;font-family:inherit}
+.btn-accent{color:#0c110b;background:#9bd17a;border:none;border-radius:100px;cursor:pointer;font-weight:600;font-family:inherit;transition:transform .25s,box-shadow .25s,filter .2s}
+.btn-accent:hover{transform:translateY(-2px);filter:brightness(1.04)}
+
+/* ----- gallery hover (the dc-runtime revealed the glow on hover) ----- */
+.gallery-item{transition:transform .4s}
+.gallery-item:hover{transform:translateY(-4px)}
+.gallery-item:hover .gal-glow{opacity:1}
+
+/* ----- nav links ----- */
+nav span[class^="nav-"],nav span{transition:color .2s}
+.nav-track:hover,.nav-book:hover{color:#9bd17a}
 
 /* ----- small typographic helpers ----- */
 .eyebrow{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:3px;color:#9bd17a;text-transform:uppercase;margin-bottom:20px}
