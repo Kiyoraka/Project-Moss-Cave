@@ -170,11 +170,17 @@ window.MossCave = window.MossCave || {};
 
   function adminBookings() {
     var list = bookingsList();
+    var shown = Math.min(M.state.bookingsShown, list.length);
+    var slice = list.slice(0, shown);
+    var more = list.length > shown
+      ? '<button data-load-more style="width:100%;font-family:inherit;font-size:14px;font-weight:600;color:#9bd17a;background:transparent;border:1px solid rgba(155,209,122,.3);padding:13px;border-radius:12px;cursor:pointer;margin-top:12px">Load more</button>' +
+        '<div style="text-align:center;font-family:\'Space Mono\',monospace;font-size:11px;color:#73815f;margin-top:10px">Showing ' + shown + ' of ' + list.length + '</div>'
+      : '';
     return '<div style="padding:8px 18px 26px"><div style="font-family:\'Newsreader\',serif;font-size:24px;padding:8px 2px 14px">Bookings</div>' +
       '<div style="display:flex;gap:7px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px">' + ['all', 'today', 'confirmed', 'pending'].map(function (f) { return '<button data-filter="' + f + '" style="' + fbtn(f) + '">' + f + '</button>'; }).join('') + '</div>' +
-      '<div style="display:flex;flex-direction:column;gap:10px">' + list.map(function (b) {
+      '<div style="display:flex;flex-direction:column;gap:10px">' + slice.map(function (b) {
         return '<div style="background:#11180e;border:1px solid rgba(155,209,122,.1);border-radius:14px;padding:14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:50%;background:rgba(155,209,122,.1);display:flex;align-items:center;justify-content:center;font-size:10px;color:#9bd17a;font-family:\'Space Mono\',monospace">' + b.initials + '</div><div><div style="font-size:14px;color:#dbe9cd">' + b.name + '</div><div style="font-family:\'Space Mono\',monospace;font-size:10px;color:#9bd17a">' + b.ref + '</div></div></div><span style="' + b.statusStyle + '">' + b.status + '</span></div><div style="display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(155,209,122,.06)"><span style="font-size:12.5px;color:#9aa790">' + b.dateLabel + ' · ' + b.slot + ' · ' + b.party + '</span><span style="font-family:\'Newsreader\',serif;font-size:17px;color:#bfe89a">' + b.amountLabel + '</span></div></div>';
-      }).join('') + '</div></div>';
+      }).join('') + '</div>' + more + '</div>';
   }
 
   function adminPos() {
@@ -310,7 +316,8 @@ window.MossCave = window.MossCave || {};
     var tf = root.querySelector('#m-track-find'); if (tf) tf.addEventListener('click', findTrack);
     root.querySelectorAll('.m-dl-receipt').forEach(function (b) { b.addEventListener('click', function () { var rec = (M.state.trackResults || [])[+this.getAttribute('data-i')]; if (rec) M.downloadReceipt(rec); }); });
     // admin
-    root.querySelectorAll('[data-filter]').forEach(function (el) { el.addEventListener('click', function () { M.setState({ bookingFilter: this.getAttribute('data-filter') }); }); });
+    root.querySelectorAll('[data-filter]').forEach(function (el) { el.addEventListener('click', function () { M.setState({ bookingFilter: this.getAttribute('data-filter'), bookingsShown: 10, bookingsPage: 1 }); }); });
+    var lm = root.querySelector('[data-load-more]'); if (lm) lm.addEventListener('click', function () { M.setState(function (s) { return { bookingsShown: s.bookingsShown + 10 }; }); });
     root.querySelectorAll('[data-set]').forEach(function (el) { el.addEventListener('click', function () { M.setState(SET[this.getAttribute('data-set')]); }); });
     root.querySelectorAll('[data-pos-key]').forEach(function (el) { el.addEventListener('click', function () { M.setState({ posDateKey: this.getAttribute('data-pos-key'), posDone: false }); }); });
     root.querySelectorAll('[data-pos-slot]').forEach(function (el) { el.addEventListener('click', function () { M.setState({ posSlot: this.getAttribute('data-pos-slot') }); }); });
