@@ -77,8 +77,12 @@ window.MossCave = window.MossCave || {};
 
   function bookingsTab() {
     var list = bookingsList();
+    var per = 10;
+    var pages = Math.max(1, Math.ceil(list.length / per));
+    var page = Math.min(Math.max(1, M.state.bookingsPage), pages);
+    var pageList = list.slice((page - 1) * per, page * per);
     var cols = 'display:grid;grid-template-columns:90px 1.4fr 1fr .8fr .7fr .9fr .7fr;gap:12px;padding:14px 22px';
-    var rows = list.map(function (b) {
+    var rows = pageList.map(function (b) {
       return '<div style="' + cols + ';border-bottom:1px solid rgba(155,209,122,.05);align-items:center;font-size:13.5px;color:#cdd8c2">' +
         '<span style="font-family:\'Space Mono\',monospace;font-size:12px;color:#9bd17a">' + b.ref + '</span>' +
         '<span style="display:flex;align-items:center;gap:10px"><span style="width:28px;height:28px;border-radius:50%;background:rgba(155,209,122,.1);display:flex;align-items:center;justify-content:center;font-size:11px;color:#9bd17a;font-family:\'Space Mono\',monospace">' + b.initials + '</span>' + b.name + '</span>' +
@@ -90,7 +94,18 @@ window.MossCave = window.MossCave || {};
       ['all', 'today', 'confirmed', 'pending'].map(function (f) { return '<button data-filter="' + f + '" style="' + fbtn(f) + '">' + f + '</button>'; }).join('') +
       '</div><div style="font-family:\'Space Mono\',monospace;font-size:12px;color:#73815f">' + list.length + ' results</div></div>' +
       '<div style="' + CARD + ';overflow:hidden"><div style="' + cols + ';border-bottom:1px solid rgba(155,209,122,.1);font-family:\'Space Mono\',monospace;font-size:10.5px;letter-spacing:1px;color:#5f7a4d;text-transform:uppercase"><span>Ref</span><span>Guest</span><span>Date</span><span>Slot</span><span>Party</span><span>Status</span><span style="text-align:right">Amount</span></div>' +
-      rows + '</div></div>';
+      rows + '</div>' + pager(page, pages) + '</div>';
+  }
+
+  function pager(page, pages) {
+    if (pages <= 1) return '';
+    var btn = function (dir, label, disabled) {
+      return '<button ' + (disabled ? '' : 'data-bnav="' + dir + '" ') + 'style="font-family:inherit;font-size:13px;padding:8px 16px;border-radius:9px;border:1px solid rgba(155,209,122,' + (disabled ? 0.06 : 0.18) + ');background:transparent;color:' + (disabled ? '#4a5640' : '#cdd8c2') + ';cursor:' + (disabled ? 'default' : 'pointer') + '">' + label + '</button>';
+    };
+    return '<div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-top:18px">' +
+      btn(-1, '‹ Prev', page <= 1) +
+      '<span style="font-family:\'Space Mono\',monospace;font-size:12.5px;color:#8c9a80">Page ' + page + ' / ' + pages + '</span>' +
+      btn(1, 'Next ›', page >= pages) + '</div>';
   }
 
   function posTab() {
@@ -197,7 +212,10 @@ window.MossCave = window.MossCave || {};
         el.addEventListener('click', function () { M.setState({ adminTab: this.getAttribute('data-go-tab') }); });
       });
       root.querySelectorAll('[data-filter]').forEach(function (el) {
-        el.addEventListener('click', function () { M.setState({ bookingFilter: this.getAttribute('data-filter') }); });
+        el.addEventListener('click', function () { M.setState({ bookingFilter: this.getAttribute('data-filter'), bookingsPage: 1, bookingsShown: 10 }); });
+      });
+      root.querySelectorAll('[data-bnav]').forEach(function (el) {
+        el.addEventListener('click', function () { var d = +this.getAttribute('data-bnav'); M.setState(function (s) { return { bookingsPage: s.bookingsPage + d }; }); });
       });
       root.querySelectorAll('[data-set]').forEach(function (el) {
         el.addEventListener('click', function () { M.setState(SET[this.getAttribute('data-set')]); });
