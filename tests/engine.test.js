@@ -63,5 +63,18 @@ ok('buildBookings non-empty', M.buildBookings().length > 0);
 ok('posDays = 12 chips', M.posDays().length === 12);
 ok('weekStrip = 7 bars', M.buildWeekStrip().length === 7);
 
+// buildMonth (admin POS calendar engine)
+var june = M.buildMonth(2026, 5, '2026-06-20');
+ok('buildMonth June: 1 blank + 30 cells', june.filter(function (c) { return c.blank; }).length === 1 && june.filter(function (c) { return c.show; }).length === 30);
+var selCell = june.filter(function (c) { return c.key === '2026-06-20'; })[0];
+ok('buildMonth highlights selectedKey', !!selCell && selCell.selected === true);
+var d1 = june.filter(function (c) { return c.show && c.day === 1; })[0];
+ok('buildMonth past day non-clickable', !!d1 && d1.clickable === false && d1.status === 'past');
+var july = M.buildMonth(2026, 6, null);
+ok('buildMonth July: 31 day cells', july.filter(function (c) { return c.show; }).length === 31);
+ok('buildMonth July: 3 leading blanks (Jul 1 = Wed)', july.filter(function (c) { return c.blank; }).length === 3);
+M.state.year = 2026; M.state.month = 5; M.state.selectedKey = '2026-06-20';
+ok('buildDays delegates to buildMonth', JSON.stringify(M.buildDays()) === JSON.stringify(M.buildMonth(2026, 5, '2026-06-20')));
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
