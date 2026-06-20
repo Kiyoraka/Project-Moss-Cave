@@ -55,7 +55,10 @@ window.MossCave = window.MossCave || {};
     mobileApp: 'guest',
     mAdminTab: 'main',
     posName: '', posDateKey: '2026-06-20', posParty: 2, posSlot: 'morning', posDone: false,
+    posYear: 2026, posMonth: 5,                 // POS calendar month view
     bookingFilter: 'all',
+    bookingsPage: 1,                            // desktop bookings pagination (10/page)
+    bookingsShown: 10,                          // mobile bookings "load more" count
     guestName: '', guestPhone: '', lastBooking: null,
     myBookings: myBookings,
     trackOpen: false, trackPhone: '', trackResults: null, trackSearched: false
