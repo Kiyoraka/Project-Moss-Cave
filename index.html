@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nature — The Moss Cave</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=Hanken+Grotesque:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-root">
+
+  <!-- floating surface switcher -->
+  <div class="switcher">
+    <button id="sw-landing" data-go="landing">Landing</button>
+    <button id="sw-admin" data-go="admin">Admin</button>
+    <button id="sw-mobile" data-go="mobile">Mobile</button>
+  </div>
+
+  <!-- ============ LANDING ============ -->
+  <div id="surface-landing" class="surface">
+    <!-- top nav -->
+    <nav style="position:fixed;top:0;left:0;right:0;z-index:1500;display:flex;align-items:center;justify-content:space-between;padding:20px 44px;background:linear-gradient(180deg,rgba(12,17,11,.92),rgba(12,17,11,0));backdrop-filter:blur(6px)">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div class="logo-dot"></div>
+        <span style="font-family:'Newsreader',serif;font-size:23px;letter-spacing:.5px">Nature</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:34px;font-size:14.5px;color:#b7c4ab">
+        <span style="cursor:pointer">Home</span>
+        <span style="cursor:pointer">The Cave</span>
+        <span style="cursor:pointer">Gallery</span>
+        <span class="nav-book" style="cursor:pointer">Book</span>
+        <span class="nav-track" style="cursor:pointer">Track booking</span>
+        <button class="nav-book btn-accent" style="font-family:inherit;font-size:14px;padding:10px 20px">Reserve</button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section style="position:relative;height:100vh;min-height:680px;overflow:hidden;display:flex;align-items:center">
+      <div id="moss-bg-1" style="position:absolute;inset:-6% -2%;background:radial-gradient(120% 90% at 70% 18%,#1c2a17 0%,#121a0f 42%,#0a0e08 100%);z-index:0"></div>
+      <div id="moss-bg-2" style="position:absolute;left:-4%;bottom:-8%;width:55%;height:75%;background:radial-gradient(60% 60% at 30% 70%,rgba(95,138,69,.32),transparent 70%);z-index:1;filter:blur(8px)"></div>
+      <div id="moss-bg-3" style="position:absolute;right:-6%;top:-4%;width:48%;height:70%;background:radial-gradient(60% 60% at 70% 30%,rgba(155,209,122,.16),transparent 70%);z-index:1;filter:blur(6px)"></div>
+      <div style="position:absolute;inset:0;z-index:2;background:radial-gradient(120% 100% at 50% 40%,transparent 40%,rgba(6,9,5,.7) 100%)"></div>
+      <canvas id="moss-spores" style="position:absolute;inset:0;z-index:3;pointer-events:none"></canvas>
+
+      <!-- hero variant content (JS-rendered) -->
+      <div id="hero-content" style="position:relative;z-index:5;width:100%"></div>
+
+      <!-- hero layout switch -->
+      <div style="position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:12px">
+        <span style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:2px;color:rgba(183,196,171,.5);text-transform:uppercase">Hero</span>
+        <div style="display:flex;gap:6px">
+          <button class="hv-btn" data-hero="a">01</button>
+          <button class="hv-btn" data-hero="b">02</button>
+          <button class="hv-btn" data-hero="c">03</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE STRIP -->
+    <div style="border-top:1px solid rgba(155,209,122,.12);border-bottom:1px solid rgba(155,209,122,.12);overflow:hidden;background:#0a0f08">
+      <div style="display:flex;gap:48px;padding:16px 0;font-family:'Newsreader',serif;font-size:22px;color:#5f7a4d;white-space:nowrap;font-style:italic">
+        <span>moss + mineral water</span><span>·</span><span>11°C year-round</span><span>·</span><span>limited daily entry</span><span>·</span><span>silent tours</span><span>·</span><span>bioluminescent walls</span><span>·</span><span>moss + mineral water</span><span>·</span><span>11°C year-round</span><span>·</span><span>limited daily entry</span><span>·</span><span>silent tours</span>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section style="max-width:1180px;margin:0 auto;padding:120px 44px 80px">
+      <div class="about-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center">
+        <div>
+          <div class="eyebrow reveal">— The experience</div>
+          <h2 class="reveal" style="font-family:'Newsreader',serif;font-weight:300;font-size:clamp(34px,4vw,56px);line-height:1.05;letter-spacing:-.5px;margin-bottom:24px">Nature decides<br>how many can enter.</h2>
+          <p class="reveal" style="color:#b0bda4;font-size:18px;margin-bottom:18px;max-width:480px">The cave can only hold so much life at once. Each day has a fixed quota of guests — once it's full, it's full. That's the point.</p>
+          <p class="reveal" style="color:#8c9a80;font-size:16px;max-width:480px">Pick a day, tell us your group size, and we'll reserve your descent. Cool air, soft light, and the smell of wet stone waiting.</p>
+          <div class="reveal" style="display:flex;gap:40px;margin-top:40px">
+            <div><div style="font-family:'Newsreader',serif;font-size:42px;color:#bfe89a">60</div><div class="stat-cap">guests / weekday</div></div>
+            <div><div style="font-family:'Newsreader',serif;font-size:42px;color:#bfe89a">11°</div><div class="stat-cap">constant temp</div></div>
+            <div><div style="font-family:'Newsreader',serif;font-size:42px;color:#bfe89a">90<span style="font-size:20px">m</span></div><div class="stat-cap">guided descent</div></div>
+          </div>
+        </div>
+        <div class="reveal" style="height:560px;border-radius:16px;overflow:hidden;position:relative;background:repeating-linear-gradient(125deg,#18221330,#18221330 14px,#1e2a1a30 14px,#1e2a1a30 28px),radial-gradient(70% 60% at 40% 40%,#283a20,#0d140a);border:1px solid rgba(155,209,122,.14)">
+          <div style="position:absolute;inset:0;background:radial-gradient(40% 40% at 30% 65%,rgba(155,209,122,.22),transparent 70%);animation:glow-pulse 5s ease-in-out infinite"></div>
+          <div style="position:absolute;inset:0;display:flex;align-items:flex-end;padding:20px"><span class="img-tag">[ moss wall · close detail ]</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="gallery-anchor" style="max-width:1240px;margin:0 auto;padding:60px 44px 100px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px">
+        <div>
+          <div class="eyebrow">— Inside</div>
+          <h2 style="font-family:'Newsreader',serif;font-weight:300;font-size:clamp(32px,4vw,52px);letter-spacing:-.5px">The gallery</h2>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:#8c9a80">06 frames</span>
+      </div>
+      <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:16px"></div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="book-anchor" style="position:relative;padding:100px 44px 120px;background:linear-gradient(180deg,#0c110b,#0a120a)">
+      <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:300px;background:radial-gradient(50% 100% at 50% 0,rgba(95,138,69,.16),transparent 70%);pointer-events:none"></div>
+      <div style="max-width:1180px;margin:0 auto;position:relative">
+        <div style="text-align:center;margin-bottom:48px">
+          <div class="eyebrow" style="margin-bottom:16px">— Reserve your descent</div>
+          <h2 style="font-family:'Newsreader',serif;font-weight:300;font-size:clamp(36px,5vw,64px);letter-spacing:-.5px">Pick a day to enter</h2>
+        </div>
+
+        <div class="book-grid" style="display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:start">
+          <!-- calendar card -->
+          <div class="panel" style="padding:26px 28px 30px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+              <button id="cal-prev" class="cal-nav">‹</button>
+              <div id="month-label" style="font-family:'Newsreader',serif;font-size:26px;letter-spacing:.3px"></div>
+              <button id="cal-next" class="cal-nav">›</button>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:10px">
+              <div class="wd">Sun</div><div class="wd">Mon</div><div class="wd">Tue</div><div class="wd">Wed</div><div class="wd">Thu</div><div class="wd">Fri</div><div class="wd">Sat</div>
+            </div>
+            <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"></div>
+            <div style="display:flex;gap:18px;margin-top:22px;padding-top:18px;border-top:1px solid rgba(155,209,122,.1);font-size:12px;color:#8c9a80;font-family:'Space Mono',monospace">
+              <span style="display:flex;align-items:center;gap:7px"><i style="width:8px;height:8px;border-radius:50%;background:#9bd17a;display:inline-block"></i>open</span>
+              <span style="display:flex;align-items:center;gap:7px"><i style="width:8px;height:8px;border-radius:50%;background:#d9a44e;display:inline-block"></i>limited</span>
+              <span style="display:flex;align-items:center;gap:7px"><i style="width:8px;height:8px;border-radius:50%;background:#7a4a48;display:inline-block"></i>full</span>
+            </div>
+          </div>
+
+          <!-- booking panel (JS-rendered) -->
+          <div id="book-panel" class="panel" style="padding:28px;min-height:430px;display:flex;flex-direction:column"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="border-top:1px solid rgba(155,209,122,.12);padding:60px 44px 40px">
+      <div style="max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:30px">
+        <div style="max-width:300px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div class="logo-dot" style="width:26px;height:26px;box-shadow:none"></div>
+            <span style="font-family:'Newsreader',serif;font-size:21px">Nature</span>
+          </div>
+          <p style="color:#73815f;font-size:14px">An underground moss sanctuary. Booked by the day, limited by the cave itself.</p>
+        </div>
+        <div style="display:flex;gap:60px;font-size:14px;color:#8c9a80">
+          <div style="display:flex;flex-direction:column;gap:10px"><span class="foot-h">Visit</span><span>The Cave</span><span>Gallery</span><span>Booking</span></div>
+          <div style="display:flex;flex-direction:column;gap:10px"><span class="foot-h">Contact</span><span>hello@nature.cave</span><span>+1 555 0148</span><span>Find us</span></div>
+        </div>
+      </div>
+      <div style="max-width:1180px;margin:40px auto 0;padding-top:24px;border-top:1px solid rgba(155,209,122,.08);font-family:'Space Mono',monospace;font-size:11px;color:#5f7a4d;display:flex;justify-content:space-between"><span>© 2026 Nature Cave</span><span>made with moss</span></div>
+    </footer>
+  </div>
+
+  <!-- ============ ADMIN (JS-rendered) ============ -->
+  <div id="surface-admin" class="surface"></div>
+
+  <!-- ============ MOBILE (JS-rendered) ============ -->
+  <div id="surface-mobile" class="surface"></div>
+
+  <!-- ============ TRACK MODAL (JS-rendered) ============ -->
+  <div id="track-root"></div>
+
+</div>
+
+<script src="js/store.js"></script>
+<script src="js/availability.js"></script>
+<script src="js/receipt.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/landing.js"></script>
+<script src="js/track.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/mobile.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
